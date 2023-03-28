@@ -7,7 +7,6 @@ const getDogshandler = async (req, res) => {
         //si no recibo name me traigo todo el array de objetos
         if (!name) {
             const responseApi = await getAllDogs()
-
             const responseDb = await getAllDogsDb()
 
             res.status(200).json(responseDb.concat(responseApi))
@@ -17,11 +16,11 @@ const getDogshandler = async (req, res) => {
             const responseNameApi = await getSearchByNameApi(name)
             const combined = responseNameDb.concat(responseNameApi)
             if (combined.length === 0) throw Error('No existe esa Raza de perro')
-            else return res.status(200).send(combined)
+            else return res.status(200).json(combined)
         }
 
     } catch (error) {
-        res.status(400).send(error.message)
+        res.status(400).json({ error: error.message })
     }
 }
 
@@ -56,19 +55,15 @@ const getDogsByIdHandler = async (req, res) => {
 };
 
 
-const getDogsByNameHandler = (req, res) => {
-    const name = req.query.name
-    res.send(`esta ruta me trae los perros por nombre nombre:${name}`)
 
-}
 
 const createDogsHandler = async (req, res) => {
     const { name, image, height, weight, life_span, temperaments } = req.body
 
 
     try {
-        if (!name || !image || !height || !weight || !life_span || !temperaments) {
-
+        if (!name || !image || !height || !weight || !life_span || temperaments.length === 0) {
+          
             throw Error('Faltan datos para crear un nuevo perro')
         }
 
@@ -84,6 +79,5 @@ const createDogsHandler = async (req, res) => {
 module.exports = {
     getDogshandler,
     getDogsByIdHandler,
-    getDogsByNameHandler,
     createDogsHandler
 }

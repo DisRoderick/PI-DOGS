@@ -1,11 +1,11 @@
 const axios = require('axios')
 require('dotenv').config();
 const { APY, APY_KEY } = process.env;
-const URL = APY + APY_KEY
 const { Dog, Temperaments } = require('../db');
 const { cleanArray } = require('../utilities/utilities')
 const { Op } = require('sequelize')
 
+const URL = APY + APY_KEY
 
 
 
@@ -18,9 +18,24 @@ const getAllDogs = async () => {
     return cleanArray(datos)
 }
 const getAllDogsDb = async () => {
-    const responseDb = await Dog.findAll()
-    return responseDb
+    const responseDb = await Dog.findAll({ include: Temperaments })
+    const dogs = responseDb.map(dog => {
+        const cleanedDog = {
+            id: dog.id,
+            name: dog.name,
+            image: dog.image,
+            height: dog.height,
+            weight: dog.weight,
+            life_span: dog.life_span,
+            created: true,
+            temperaments: dog.temperaments.map(temp => temp.name).join(", "),
+
+        }
+        return cleanedDog
+    })
+    return dogs
 }
+
 
 const searchByNameDb = async (name) => {
 
@@ -30,13 +45,24 @@ const searchByNameDb = async (name) => {
                 [Op.iLike]: `%${name}%`
             }
         },
-        include: [{
-            model: Temperaments
-        }
-        ]
+        include: Temperaments
 
     })
-    return responseDb
+    const dogs = responseDb.map(dog => {
+        const cleanedDog = {
+            id: dog.id,
+            name: dog.name,
+            image: dog.image,
+            height: dog.height,
+            weight: dog.weight,
+            life_span: dog.life_span,
+            created: true,
+            temperaments: dog.temperaments.map(temp => temp.name).join(", "),
+
+        }
+        return cleanedDog
+    })
+    return dogs
 }
 
 const getSearchByNameApi = async (name) => {
@@ -45,21 +71,18 @@ const getSearchByNameApi = async (name) => {
     const dogName = []
     responseName.data.forEach((el) => {
 
-
         if (el.name.toLowerCase().includes(nameMinuscula)) {
             const searchDog = {
                 id: el.id,
                 name: el.name,
-                image: el.image.URL,
-                heigth: el.height.metric,
+                image: el.image.url,
+                height: el.height.metric,
                 weight: el.weight.metric,
                 life_span: el.life_span,
-                temperament: el.temperament
+                temperaments: el.temperament
             }
-
             dogName.push(searchDog)
         }
-
 
     })
     return dogName
@@ -103,7 +126,7 @@ const createNewDog = async ({ name, image, height, weight, life_span, temperamen
 }
 
 const searchByIdApi = async (id) => {
-    console.log(id);
+
     const idInt = parseInt(id)
 
     const responseApi = await getAllDogs()

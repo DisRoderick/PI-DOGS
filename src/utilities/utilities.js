@@ -5,10 +5,11 @@ const cleanArray = (array) => {
             id: element.id,
             name: element.name,
             image: element.image.url,
-            heigth: element.height.metric,
+            height: element.height.metric,
             weight: element.weight.metric,
             life_span: element.life_span,
-            temperaments: element.temperament
+            temperaments: element.temperament,
+            created: false
         }
         newArray.push(dogsClean)
     });
