@@ -63,7 +63,7 @@ const createDogsHandler = async (req, res) => {
 
     try {
         if (!name || !image || !height || !weight || !life_span || temperaments.length === 0) {
-          
+
             throw Error('Faltan datos para crear un nuevo perro')
         }
 

@@ -88,7 +88,7 @@ const getSearchByNameApi = async (name) => {
     return dogName
 
 }
-
+//buscon
 
 const searchByIdDb = async (id) => {
     const response = await Dog.findByPk(id, {
