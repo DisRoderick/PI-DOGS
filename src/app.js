@@ -5,6 +5,7 @@ const morgan = require('morgan');
 const routes = require('./routes/index.js');
 
 require('./db.js');
+console.log('esto no deberia  aparecer en main');
 
 const server = express();
 
